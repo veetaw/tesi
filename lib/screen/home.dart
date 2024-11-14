@@ -95,57 +95,66 @@ class _HomeState extends State<Home> {
                               itemBuilder: (context, index) {
                                 Course? course = box.getAt(index);
 
-                                return InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                      CoursePage.routeName,
-                                      arguments: course,
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: kBrownLight,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          course!.nome,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleLarge
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.only(top: 16),
-                                        ),
-                                        Text(
-                                          "Liv ${course.getLastCompletedLevel()?.livello}",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.only(top: 4),
-                                        ),
-                                        LinearProgressIndicator(
-                                          backgroundColor:
-                                              kBrownAccent.withAlpha(50),
-                                          color: kBrownAccent,
-                                          minHeight: 6,
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).pushNamed(
+                                        CoursePage.routeName,
+                                        arguments: course,
+                                      );
+                                    },
+                                    child: Dismissible(
+                                      onDismissed: (direction) =>
+                                          box.deleteAt(index),
+                                      key: Key(course!.nome),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: kBrownLight,
                                           borderRadius:
                                               BorderRadius.circular(12),
-                                          value: course.getProgress(),
-                                        )
-                                      ],
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              course!.nome,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                            ),
+                                            const Padding(
+                                              padding: EdgeInsets.only(top: 16),
+                                            ),
+                                            Text(
+                                              "Liv ${course.getLastCompletedLevel()?.livello}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                            ),
+                                            const Padding(
+                                              padding: EdgeInsets.only(top: 4),
+                                            ),
+                                            LinearProgressIndicator(
+                                              backgroundColor:
+                                                  kBrownAccent.withAlpha(50),
+                                              color: kBrownAccent,
+                                              minHeight: 6,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              value: course.getProgress(),
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 );

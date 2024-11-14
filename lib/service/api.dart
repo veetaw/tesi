@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:tesi/model/api/check.dart';
 import 'package:tesi/model/course.dart';
 
 class ApiService {
@@ -27,6 +28,26 @@ class ApiService {
       return Course.fromJson(body);
     } else {
       throw "Can't get course data.";
+    }
+  }
+
+  static Future<Check> checkAnswer(String domanda, String risposta) async {
+    var response = await http.post(
+      Uri.parse("$baseUrl/ai/checkOQ"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'domanda': domanda,
+        'risposta': risposta,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      return Check.fromJson(body);
+    } else {
+      throw "Can't check answer.";
     }
   }
 }

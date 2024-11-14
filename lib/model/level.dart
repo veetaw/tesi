@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:tesi/model/multiple_choice.dart';
+import 'package:tesi/model/open_question.dart';
 
 part 'level.g.dart';
 
@@ -9,7 +10,7 @@ class Level extends HiveObject {
   int? livello;
 
   @HiveField(1)
-  List<String>? openQuestions;
+  List<OpenQuestion>? openQuestions;
 
   @HiveField(2)
   List<MultipleChoice>? multipleChoice;
@@ -29,16 +30,18 @@ class Level extends HiveObject {
 
   Level.fromJson(Map<String, dynamic> json) {
     livello = json['livello'];
-    print(livello);
-    openQuestions = json['open_questions'].cast<String>();
+    if (json['open_questions'] != null) {
+      openQuestions = <OpenQuestion>[];
+      json['open_questions'].forEach((v) {
+        openQuestions!.add(OpenQuestion.fromJson(v));
+      });
+    }
     if (json['multiple_choice'] != null) {
       multipleChoice = <MultipleChoice>[];
       json['multiple_choice'].forEach((v) {
         multipleChoice!.add(MultipleChoice.fromJson(v));
       });
     }
-
-    print(this);
   }
 
   Map<String, dynamic> toJson() {

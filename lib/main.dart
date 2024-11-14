@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:tesi/model/open_question.dart';
 import 'package:tesi/screen/add_course.dart';
 import 'package:tesi/screen/course_page.dart';
 import 'package:tesi/screen/game.dart';
@@ -29,6 +30,7 @@ void main() async {
   Hive.registerAdapter(CourseAdapter());
   Hive.registerAdapter(LevelAdapter());
   Hive.registerAdapter(MultipleChoiceAdapter());
+  Hive.registerAdapter(OpenQuestionAdapter());
 
   // Shared Preferences
   await SharedPreferencesService.init();
@@ -36,8 +38,14 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -72,5 +80,11 @@ class MyApp extends StatelessWidget {
       },
       home: const LandingPage(),
     );
+  }
+
+  @override
+  void dispose() {
+    Hive.close();
+    super.dispose();
   }
 }

@@ -20,13 +20,16 @@ class MultipleChoiceAdapter extends TypeAdapter<MultipleChoice> {
       question: fields[0] as String?,
       answers: (fields[1] as List?)?.cast<String>(),
       correctIndex: fields[2] as int?,
-    )..answer = fields[3] as int?;
+    )
+      ..answer = fields[3] as int?
+      ..spiegazione = fields[4] as String?
+      ..suggerimento = fields[5] as String?;
   }
 
   @override
   void write(BinaryWriter writer, MultipleChoice obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.question)
       ..writeByte(1)
@@ -34,7 +37,11 @@ class MultipleChoiceAdapter extends TypeAdapter<MultipleChoice> {
       ..writeByte(2)
       ..write(obj.correctIndex)
       ..writeByte(3)
-      ..write(obj.answer);
+      ..write(obj.answer)
+      ..writeByte(4)
+      ..write(obj.spiegazione)
+      ..writeByte(5)
+      ..write(obj.suggerimento);
   }
 
   @override

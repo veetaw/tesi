@@ -8,18 +8,30 @@ import 'package:tesi/model/course.dart';
 import 'package:tesi/model/level.dart';
 import 'package:tesi/screen/quiz.dart';
 
-class Game extends StatelessWidget {
+class Game extends StatefulWidget {
   static const String routeName = "game";
   final Course course;
   const Game({super.key, required this.course});
 
   @override
+  State<Game> createState() => _GameState();
+}
+
+class _GameState extends State<Game> {
+  @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height * 1.5;
     var width = MediaQuery.of(context).size.width;
 
-    var livelli = course.levels!;
-    if (!livelli.any((e) => e.isNext)) {
+    var livelli = widget.course.levels!;
+    var lastDoneIndex = livelli.lastIndexWhere((level) => level.isDone);
+
+    if (lastDoneIndex != -1 && lastDoneIndex < livelli.length - 1) {
+      livelli[lastDoneIndex + 1].isNext = true;
+      try {
+        livelli[lastDoneIndex + 1].save();
+      } catch (_) {}
+    } else if (!livelli.any((e) => e.isNext)) {
       livelli[0].isNext = true;
       try {
         livelli[0].save();
@@ -40,6 +52,26 @@ class Game extends StatelessWidget {
                 fit: BoxFit.fill,
               ),
             ),
+            CustomPaint(
+              size: Size(width, height),
+              painter: DottedLinePainter(livelli: livelli, height: height),
+            ),
+            for (var level in livelli)
+              Positioned(
+                left: (width / 2 - 50) +
+                    (level.livello! % 2 == 0
+                        ? -20.0 * level.livello!
+                        : 20.0 * (level.livello! < 9 ? level.livello! : 8)),
+                top: MediaQuery.of(context).padding.top +
+                    20.0 +
+                    (height / 10 * level.livello!),
+                child: LevelIndicator(
+                  level: level,
+                  backCallback: () {
+                    setState(() {});
+                  },
+                ),
+              ),
             Positioned(
               top: MediaQuery.of(context).padding.top,
               left: 16,
@@ -69,21 +101,6 @@ class Game extends StatelessWidget {
                 ),
               ),
             ),
-            CustomPaint(
-              size: Size(width, height),
-              painter: DottedLinePainter(livelli: livelli, height: height),
-            ),
-            for (var level in livelli)
-              Positioned(
-                left: (width / 2 - 50) +
-                    (level.livello! % 2 == 0
-                        ? -20.0 * level.livello!
-                        : 20.0 * (level.livello! < 9 ? level.livello! : 8)),
-                top: MediaQuery.of(context).padding.top +
-                    20.0 +
-                    (height / 10 * level.livello!),
-                child: LevelIndicator(level: level),
-              ),
           ],
         ),
       ),
@@ -92,9 +109,12 @@ class Game extends StatelessWidget {
 }
 
 class LevelIndicator extends StatefulWidget {
+  final Function backCallback;
+
   const LevelIndicator({
     super.key,
     required this.level,
+    required this.backCallback,
   });
 
   final Level level;
@@ -113,13 +133,15 @@ class _LevelIndicatorState extends State<LevelIndicator> {
       onTapUp: (details) => setState(() => isTapped = false),
       onTapCancel: () => setState(() => isTapped = false),
       onTap: () async {
-        print(widget.level.toString());
         if (!widget.level.isNext || widget.level.isDone) {
           return;
         }
 
         Navigator.of(context)
-            .pushNamed(Quiz.routeName, arguments: widget.level);
+            .pushNamed(Quiz.routeName, arguments: widget.level)
+            .then((_) {
+          widget.backCallback();
+        });
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
