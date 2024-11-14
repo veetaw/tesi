@@ -13,6 +13,9 @@ class MultipleChoice extends HiveObject {
   @HiveField(2)
   int? correctIndex;
 
+  @HiveField(3)
+  int? answer;
+
   MultipleChoice({this.question, this.answers, this.correctIndex});
 
   MultipleChoice.fromJson(Map<String, dynamic> json) {

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:tesi/constants/asset_names.dart';
 import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/course.dart';
+import 'package:tesi/screen/game.dart';
 
 class CoursePage extends StatelessWidget {
   static const String routeName = "course";
@@ -69,11 +70,66 @@ class CoursePage extends StatelessWidget {
               ),
             ),
           ),
-          const Expanded(
+          Expanded(
             flex: 3,
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Placeholder(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                        backgroundColor: Colors.white,
+                        foregroundColor: kBrownPrimary,
+                        side: const BorderSide(color: kBrownPrimary),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        print('test');
+                      },
+                      child: Text(
+                        'Chiedi a QuizHog',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                        backgroundColor: kBrownLight,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(
+                          Game.routeName,
+                          arguments: course,
+                        );
+                      },
+                      child: Text(
+                        'Gioca!',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],

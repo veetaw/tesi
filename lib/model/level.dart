@@ -50,4 +50,9 @@ class Level extends HiveObject {
     }
     return data;
   }
+
+  @override
+  String toString() {
+    return 'Level{livello: $livello, openQuestions: $openQuestions, multipleChoice: $multipleChoice, isNext: $isNext, isDone: $isDone}';
+  }
 }

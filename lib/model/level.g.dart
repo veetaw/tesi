@@ -20,9 +20,9 @@ class LevelAdapter extends TypeAdapter<Level> {
       livello: fields[0] as int?,
       openQuestions: (fields[1] as List?)?.cast<String>(),
       multipleChoice: (fields[2] as List?)?.cast<MultipleChoice>(),
-    )
-      ..isNext = fields[3] as bool
-      ..isDone = fields[4] as bool;
+      isNext: fields[3] as bool,
+      isDone: fields[4] as bool,
+    );
   }
 
   @override

@@ -20,7 +20,8 @@ class CourseAdapter extends TypeAdapter<Course> {
       id: fields[0] as int,
       nome: fields[1] as String,
       argomenti: fields[2] as String,
-    )..levels = (fields[3] as List?)?.cast<Level>();
+      levels: (fields[3] as List?)?.cast<Level>(),
+    );
   }
 
   @override

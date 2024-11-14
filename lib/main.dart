@@ -4,7 +4,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:tesi/screen/add_course.dart';
 import 'package:tesi/screen/course_page.dart';
+import 'package:tesi/screen/game.dart';
 import 'package:tesi/screen/home.dart';
+import 'package:tesi/screen/quiz.dart';
 import 'package:tesi/service/shared_preferences_service.dart';
 import 'firebase_options.dart';
 
@@ -55,6 +57,14 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) =>
                   CoursePage(course: settings.arguments as Course),
+            );
+          case Game.routeName:
+            return MaterialPageRoute(
+              builder: (context) => Game(course: settings.arguments as Course),
+            );
+          case Quiz.routeName:
+            return MaterialPageRoute(
+              builder: (context) => Quiz(level: settings.arguments as Level),
             );
           default:
             return MaterialPageRoute(builder: (context) => const LandingPage());
