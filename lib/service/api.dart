@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-/*import 'package:tesi/model/course.dart';
+import 'package:tesi/model/course.dart';
 
 class ApiService {
-  final String baseUrl = 'http://localhost:8080';
+  static const String baseUrl = 'http://localhost:8080';
 
-  Future<List<Course>> getAllCourses() async {
+  static Future<List<Course>> getAllCourses() async {
     var response = await http.get(Uri.parse("$baseUrl/courses/corsi"));
 
     if (response.statusCode == 200) {
@@ -18,7 +18,7 @@ class ApiService {
     }
   }
 
-  Future<Course> getCourseData(Course course) async {
+  static Future<Course> getCourseData(Course course) async {
     var response =
         await http.get(Uri.parse("$baseUrl/courses/corso/${course.id}"));
 
@@ -30,4 +30,3 @@ class ApiService {
     }
   }
 }
-*/

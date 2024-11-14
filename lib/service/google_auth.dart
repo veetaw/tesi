@@ -32,7 +32,7 @@ class GoogleAuth {
       );
 
       return await FirebaseAuth.instance.signInWithCredential(credential);
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       throw Exception("Errore nel login");
     }
   }

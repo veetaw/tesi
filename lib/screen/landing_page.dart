@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tesi/constants/asset_names.dart';
 import 'package:tesi/constants/colors.dart';
+import 'package:tesi/screen/home.dart';
 import 'package:tesi/service/google_auth.dart';
-
-import 'package:tesi/service/shared_preferences_service.dart';
 
 class LandingPage extends StatelessWidget {
   static const String routeName = "landing_page";
@@ -61,19 +60,9 @@ class LandingPage extends StatelessWidget {
                       ? "Avanti"
                       : "Accedi",
                   onTap: () async {
-                    if (GoogleAuth.instance.isUserLoggedIn()) {
-                    } else {
+                    if (!GoogleAuth.instance.isUserLoggedIn()) {
                       try {
                         await GoogleAuth.instance.signInWithGoogle();
-
-                        if (context.mounted) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => Scaffold(),
-                            ),
-                          );
-                        }
-                        return;
                       } catch (e) {
                         if (context.mounted) {
                           AwesomeDialog(
@@ -84,7 +73,14 @@ class LandingPage extends StatelessWidget {
                             desc: 'Errore durante la fase di accesso',
                           ).show();
                         }
+
+                        return;
                       }
+                    }
+
+                    if (context.mounted) {
+                      Navigator.of(context)
+                          .pushReplacementNamed(Home.routeName);
                     }
                   },
                 ),

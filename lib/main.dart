@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:tesi/screen/add_course.dart';
+import 'package:tesi/screen/course_page.dart';
+import 'package:tesi/screen/home.dart';
 import 'package:tesi/service/shared_preferences_service.dart';
 import 'firebase_options.dart';
 
@@ -42,8 +45,20 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Nunito',
       ),
-      routes: {
-        LandingPage.routeName: (context) => const LandingPage(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case Home.routeName:
+            return MaterialPageRoute(builder: (context) => const Home());
+          case AddCourse.routeName:
+            return MaterialPageRoute(builder: (context) => const AddCourse());
+          case CoursePage.routeName:
+            return MaterialPageRoute(
+              builder: (context) =>
+                  CoursePage(course: settings.arguments as Course),
+            );
+          default:
+            return MaterialPageRoute(builder: (context) => const LandingPage());
+        }
       },
       home: const LandingPage(),
     );

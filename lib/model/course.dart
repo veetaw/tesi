@@ -54,6 +54,12 @@ class Course extends HiveObject {
     );
   }
 
+  Level? getLastCompletedLevel() {
+    if (levels == null) return null;
+    return levels!
+        .lastWhere((level) => level.isDone, orElse: () => levels!.first);
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -66,4 +72,11 @@ class Course extends HiveObject {
 
   @override
   int get hashCode => id.hashCode ^ nome.hashCode ^ argomenti.hashCode;
+
+  double getProgress() {
+    if (levels == null || levels!.isEmpty) return 0.0;
+    Level? lastCompletedLevel = getLastCompletedLevel();
+    if (lastCompletedLevel == null) return 0.0;
+    return lastCompletedLevel.livello! / levels!.length;
+  }
 }
