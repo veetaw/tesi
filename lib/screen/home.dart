@@ -7,6 +7,7 @@ import 'package:tesi/constants/hive.dart';
 import 'package:tesi/constants/asset_names.dart';
 import 'package:tesi/model/course.dart';
 import 'package:tesi/screen/add_course.dart';
+import 'package:tesi/screen/admin_add.dart';
 import 'package:tesi/screen/course_page.dart';
 
 class Home extends StatefulWidget {
@@ -179,6 +180,10 @@ class _HomeState extends State<Home> {
           onHorizontalDragEnd: (_) => setState(
             () => otherPP = !otherPP,
           ),
+          onTap: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => AdminAddScreen()));
+          },
           child: CircleAvatar(
             backgroundColor: kBrownLight,
             radius: 40,

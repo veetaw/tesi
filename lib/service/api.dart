@@ -4,7 +4,7 @@ import 'package:tesi/model/api/check.dart';
 import 'package:tesi/model/course.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:8080';
+  static const String baseUrl = 'https://b709-5-91-173-217.ngrok-free.app';
 
   static Future<List<Course>> getAllCourses() async {
     var response = await http.get(Uri.parse("$baseUrl/courses/corsi"));

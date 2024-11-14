@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:tesi/constants/asset_names.dart';
 import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/course.dart';
+import 'package:tesi/screen/ask_quizhog.dart';
 import 'package:tesi/screen/game.dart';
 
 class CoursePage extends StatelessWidget {
@@ -91,7 +92,7 @@ class CoursePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        print('test');
+                        Navigator.of(context).pushNamed(AskQuizHog.routeName);
                       },
                       child: Text(
                         'Chiedi a QuizHog',

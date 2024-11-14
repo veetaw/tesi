@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:tesi/model/open_question.dart';
 import 'package:tesi/screen/add_course.dart';
+import 'package:tesi/screen/ask_quizhog.dart';
 import 'package:tesi/screen/course_page.dart';
 import 'package:tesi/screen/game.dart';
 import 'package:tesi/screen/home.dart';
@@ -61,6 +62,8 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(builder: (context) => const Home());
           case AddCourse.routeName:
             return MaterialPageRoute(builder: (context) => const AddCourse());
+          case AskQuizHog.routeName:
+            return MaterialPageRoute(builder: (context) => const AskQuizHog());
           case CoursePage.routeName:
             return MaterialPageRoute(
               builder: (context) =>
