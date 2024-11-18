@@ -39,6 +39,7 @@ class _GameState extends State<Game> {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
         scrollDirection: Axis.vertical,

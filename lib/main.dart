@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/open_question.dart';
 import 'package:tesi/screen/add_course.dart';
 import 'package:tesi/screen/ask_quizhog.dart';
@@ -9,6 +10,8 @@ import 'package:tesi/screen/course_page.dart';
 import 'package:tesi/screen/game.dart';
 import 'package:tesi/screen/home.dart';
 import 'package:tesi/screen/quiz.dart';
+import 'package:tesi/screen/quizhog.dart';
+import 'package:tesi/screen/slides.dart';
 import 'package:tesi/service/shared_preferences_service.dart';
 import 'firebase_options.dart';
 
@@ -55,6 +58,16 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
         fontFamily: 'Nunito',
+        textSelectionTheme: TextSelectionThemeData(
+          selectionColor: kBrownLight.withAlpha(100),
+          cursorColor: kBrownAccent,
+          selectionHandleColor: kBrownPrimary,
+        ),
+        scaffoldBackgroundColor: Colors.white,
+        dialogBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+        ),
       ),
       onGenerateRoute: (settings) {
         switch (settings.name) {
@@ -62,8 +75,8 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(builder: (context) => const Home());
           case AddCourse.routeName:
             return MaterialPageRoute(builder: (context) => const AddCourse());
-          case AskQuizHog.routeName:
-            return MaterialPageRoute(builder: (context) => const AskQuizHog());
+          case Slides.routeName:
+            return MaterialPageRoute(builder: (context) => const Slides());
           case CoursePage.routeName:
             return MaterialPageRoute(
               builder: (context) =>
@@ -77,8 +90,21 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(
               builder: (context) => Quiz(level: settings.arguments as Level),
             );
+          case AskQuizHog.routeName:
+            return MaterialPageRoute(
+              builder: (context) => AskQuizHog(
+                input: settings.arguments as ScreenInput,
+              ),
+            );
+          case QuizHog.routeName:
+            return MaterialPageRoute(
+              builder: (context) =>
+                  QuizHog(input: settings.arguments as ScreenInput),
+            );
           default:
-            return MaterialPageRoute(builder: (context) => const LandingPage());
+            return MaterialPageRoute(
+              builder: (context) => const LandingPage(),
+            );
         }
       },
       home: const LandingPage(),

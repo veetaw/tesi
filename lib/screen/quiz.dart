@@ -37,6 +37,7 @@ class _QuizState extends State<Quiz> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("Livello ${widget.level.livello! + 1}"),
         actions: [
@@ -137,7 +138,6 @@ class _QuizState extends State<Quiz> {
                         Padding(
                           padding: const EdgeInsets.only(top: 16),
                           child: _buildBtn(context, () async {
-                            print(question.answer == question.correctIndex);
                             if (question.answer == question.correctIndex) {
                               Confetti.launch(
                                 context,
@@ -164,7 +164,16 @@ class _QuizState extends State<Quiz> {
                                   milliseconds: 500,
                                 ),
                               );
-                            } else {}
+                            } else {
+                              await AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.error,
+                                animType: AnimType.bottomSlide,
+                                title: 'Risposta sbagliata',
+                                desc:
+                                    'La risposta corretta era: ${question.answers![question.correctIndex!]}\nSpiegazione: ${question.spiegazione}}',
+                              ).show();
+                            }
                             try {
                               await question.save();
                             } catch (_) {}

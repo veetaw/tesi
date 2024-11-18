@@ -13,6 +13,7 @@ class AdminAddScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Admin Add Screen'),
       ),
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

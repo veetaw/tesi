@@ -13,6 +13,7 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -170,7 +171,7 @@ class _AnimatedBorderButtonState extends State<_AnimatedBorderButton>
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 24,
-                      vertical: 14,
+                      vertical: 10,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,

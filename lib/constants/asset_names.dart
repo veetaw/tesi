@@ -13,4 +13,5 @@ class AssetNames {
   static const String kBtnDisabled = "assets/btn_disabled.svg";
   static const String kBtnDone2 = "assets/btn_done_2.svg";
   static const String kBtnDone = "assets/btn_done.svg";
+  static const String kStudying = "assets/studying.svg";
 }

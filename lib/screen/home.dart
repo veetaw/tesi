@@ -9,6 +9,7 @@ import 'package:tesi/model/course.dart';
 import 'package:tesi/screen/add_course.dart';
 import 'package:tesi/screen/admin_add.dart';
 import 'package:tesi/screen/course_page.dart';
+import 'package:tesi/screen/slides.dart';
 
 class Home extends StatefulWidget {
   static const String routeName = "home";
@@ -25,6 +26,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.of(context).pushNamed(
@@ -214,6 +216,14 @@ class _HomeState extends State<Home> {
               overflow: TextOverflow.clip,
             ),
           ),
+        IconButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(Slides.routeName);
+          },
+          icon: const Icon(
+            Icons.document_scanner,
+          ),
+        )
       ],
     );
   }

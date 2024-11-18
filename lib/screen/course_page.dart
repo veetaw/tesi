@@ -22,6 +22,7 @@ class CoursePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(course.nome),
       ),
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           Expanded(
@@ -52,18 +53,18 @@ class CoursePage extends StatelessWidget {
                           ),
                         ),
                         Expanded(
-                            child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              "Sembra tu non abbia ancora delle medaglie",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
                           ),
-                          margin: const EdgeInsets.symmetric(vertical: 16),
-                          child: Text(
-                            "Sembra tu non abbia ancora delle medaglie",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ))
+                        )
                       ],
                     ),
                   )
@@ -92,7 +93,10 @@ class CoursePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(AskQuizHog.routeName);
+                        // TODO: screen input
+                        Navigator.of(context).pushNamed(
+                          AskQuizHog.routeName,
+                        );
                       },
                       child: Text(
                         'Chiedi a QuizHog',
