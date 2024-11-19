@@ -90,17 +90,20 @@ class _AddCourseState extends State<AddCourse> {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: kBrownLight,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(12),
-                  ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.3,
+              decoration: const BoxDecoration(
+                color: kBrownLight,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(12),
                 ),
-                child: Hero(
-                    tag: AssetNames.kChoosingBook,
-                    child: SvgPicture.asset(AssetNames.kChoosingBook)),
+              ),
+              child: Hero(
+                tag: AssetNames.kChoosingBook,
+                child: SvgPicture.asset(
+                  AssetNames.kChoosingBook,
+                ),
               ),
             ),
             Expanded(

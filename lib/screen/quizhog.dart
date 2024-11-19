@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tesi/constants/asset_names.dart';
 import 'package:tesi/constants/colors.dart';
+import 'package:tesi/model/course.dart';
 import 'package:tesi/screen/ask_quizhog.dart';
 
 class QuizHog extends StatelessWidget {
@@ -108,9 +109,11 @@ class QuizHog extends StatelessWidget {
 class ScreenInput {
   final String? textSelection;
   final String? pdfContent;
+  final Course? corso;
 
   ScreenInput({
-    required this.textSelection,
-    required this.pdfContent,
+    this.textSelection,
+    this.pdfContent,
+    this.corso,
   });
 }

@@ -5,6 +5,7 @@ import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/course.dart';
 import 'package:tesi/screen/ask_quizhog.dart';
 import 'package:tesi/screen/game.dart';
+import 'package:tesi/screen/quizhog.dart';
 
 class CoursePage extends StatelessWidget {
   static const String routeName = "course";
@@ -93,9 +94,9 @@ class CoursePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        // TODO: screen input
                         Navigator.of(context).pushNamed(
                           AskQuizHog.routeName,
+                          arguments: ScreenInput(corso: course),
                         );
                       },
                       child: Text(

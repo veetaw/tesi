@@ -21,8 +21,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool otherPP = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,8 +34,8 @@ class _HomeState extends State<Home> {
         label: Text(
           "Aggiungi corso",
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: kBrownPrimary,
-                fontWeight: FontWeight.w600,
+                color: kBrownAccent,
+                fontWeight: FontWeight.w800,
               ),
         ),
         shape: RoundedRectangleBorder(
@@ -47,14 +45,14 @@ class _HomeState extends State<Home> {
         ),
         icon: const Icon(Icons.add),
         backgroundColor: kBrownLight,
-        foregroundColor: kBrownPrimary,
+        foregroundColor: kBrownAccent,
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              _customAppBar(context),
+              const CustomAppBar(),
               Expanded(
                 child: FutureBuilder(
                     future: Hive.openBox<Course>(courseBox),
@@ -108,13 +106,25 @@ class _HomeState extends State<Home> {
                                       );
                                     },
                                     child: Dismissible(
+                                      direction: DismissDirection.endToStart,
+                                      secondaryBackground: const Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: kBrownAccent,
+                                          ),
+                                        ),
+                                      ),
+                                      background: Container(),
                                       onDismissed: (direction) =>
                                           box.deleteAt(index),
                                       key: Key(course!.nome),
                                       child: Container(
                                         padding: const EdgeInsets.all(16),
                                         decoration: BoxDecoration(
-                                          color: kBrownLight,
+                                          color: kBrownLight.withAlpha(120),
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
@@ -123,7 +133,7 @@ class _HomeState extends State<Home> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              course!.nome,
+                                              course.nome,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleLarge
@@ -135,7 +145,7 @@ class _HomeState extends State<Home> {
                                               padding: EdgeInsets.only(top: 16),
                                             ),
                                             Text(
-                                              "Liv ${course.getLastCompletedLevel()?.livello}",
+                                              "Livello ${course.getLastCompletedLevel()!.livello! + 1}",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium
@@ -174,8 +184,20 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+}
 
-  Widget _customAppBar(BuildContext context) {
+class CustomAppBar extends StatefulWidget {
+  const CustomAppBar({super.key});
+
+  @override
+  State<CustomAppBar> createState() => _CustomAppBarState();
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  bool otherPP = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         GestureDetector(
@@ -188,7 +210,7 @@ class _HomeState extends State<Home> {
           },
           child: CircleAvatar(
             backgroundColor: kBrownLight,
-            radius: 40,
+            radius: 20,
             child:
                 FirebaseAuth.instance.currentUser!.photoURL != null && !otherPP
                     ? ClipOval(
@@ -211,9 +233,10 @@ class _HomeState extends State<Home> {
         if (FirebaseAuth.instance.currentUser!.displayName != null)
           Expanded(
             child: Text(
-              FirebaseAuth.instance.currentUser!.displayName!,
-              style: Theme.of(context).textTheme.displaySmall,
-              overflow: TextOverflow.clip,
+              "Ciao ${FirebaseAuth.instance.currentUser!.displayName!}!",
+              style: Theme.of(context).textTheme.titleLarge,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ),
         IconButton(
