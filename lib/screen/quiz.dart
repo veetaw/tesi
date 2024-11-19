@@ -1,6 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/api/check.dart';
 import 'package:tesi/model/level.dart';
@@ -114,47 +115,47 @@ class _QuizState extends State<Quiz> {
                             ),
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
-                            child: _buildBtn(context, () async {
-                              if (question.answer == question.correctIndex) {
-                                Confetti.launch(
-                                  context,
-                                  options: const ConfettiOptions(
-                                    particleCount: 200,
-                                    spread: 50,
-                                    y: 1,
-                                    x: 0,
-                                  ),
-                                );
-                                Confetti.launch(
-                                  context,
-                                  options: const ConfettiOptions(
-                                    particleCount: 200,
-                                    spread: 50,
-                                    y: 1,
-                                    x: 1,
-                                  ),
-                                );
+                            child: _buildBtn(
+                              context,
+                              () async {
+                                if (question.answer == question.correctIndex) {
+                                  Confetti.launch(
+                                    context,
+                                    options: const ConfettiOptions(
+                                      particleCount: 200,
+                                      spread: 50,
+                                      y: 1,
+                                      x: 0,
+                                    ),
+                                  );
+                                  Confetti.launch(
+                                    context,
+                                    options: const ConfettiOptions(
+                                      particleCount: 200,
+                                      spread: 50,
+                                      y: 1,
+                                      x: 1,
+                                    ),
+                                  );
 
-                                // wait a bit for the animation
-                                await Future.delayed(
-                                  const Duration(
-                                    milliseconds: 500,
-                                  ),
-                                );
-                              } else {
-                                await AwesomeDialog(
-                                  context: context,
-                                  dialogType: DialogType.error,
-                                  animType: AnimType.bottomSlide,
-                                  title: 'Risposta sbagliata',
-                                  desc:
-                                      'La risposta corretta era: ${question.answers![question.correctIndex!]}\nSpiegazione: ${question.spiegazione}}',
-                                ).show();
-                              }
-                              try {
-                                await question.save();
-                              } catch (_) {}
-                            }),
+                                  // wait a bit for the animation
+                                  await Future.delayed(
+                                    const Duration(
+                                      milliseconds: 500,
+                                    ),
+                                  );
+                                } else {
+                                  await AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.error,
+                                    animType: AnimType.bottomSlide,
+                                    title: 'Risposta sbagliata',
+                                    desc:
+                                        'La risposta corretta era: ${question.answers![question.correctIndex!]}\nSpiegazione: ${question.spiegazione}}',
+                                  ).show();
+                                }
+                              },
+                            ),
                           ),
                         ],
                       );
@@ -233,8 +234,7 @@ class _QuizState extends State<Quiz> {
                                       animType: AnimType.bottomSlide,
                                       title:
                                           'Hai ricevuto un voto di ${resp.voto}/30',
-                                      desc:
-                                          'la risposta corretta era "${resp.soluzione}"',
+                                      desc: resp.soluzione,
                                     ).show();
 
                                     _answerController.clear();
@@ -276,7 +276,7 @@ class _QuizState extends State<Quiz> {
     );
   }
 
-  ElevatedButton _buildBtn(BuildContext context, Function onTap) {
+  Widget _buildBtn(BuildContext context, Function onTap) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, 48),
@@ -298,9 +298,6 @@ class _QuizState extends State<Quiz> {
             desc: 'Hai completato il quiz!',
             btnOkOnPress: () async {
               widget.level.isDone = true;
-              try {
-                await widget.level.save();
-              } catch (_) {}
               Navigator.of(context).pop();
             },
           ).show();

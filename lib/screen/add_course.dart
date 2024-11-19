@@ -113,8 +113,7 @@ class _AddCourseState extends State<AddCourse> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Center(
-                          child: Text('ERRORE!!\n ${snapshot.error}'));
+                      return Center(child: Text('ERRORE!!\n${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(
                         child: Text(

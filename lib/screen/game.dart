@@ -29,12 +29,16 @@ class _GameState extends State<Game> {
     if (lastDoneIndex != -1 && lastDoneIndex < livelli.length - 1) {
       livelli[lastDoneIndex + 1].isNext = true;
       try {
-        livelli[lastDoneIndex + 1].save();
+        widget.course.levels = livelli;
+
+        widget.course.save();
       } catch (_) {}
     } else if (!livelli.any((e) => e.isNext)) {
       livelli[0].isNext = true;
+      widget.course.levels = livelli;
+
       try {
-        livelli[0].save();
+        widget.course.save();
       } catch (_) {}
     }
 
@@ -67,6 +71,7 @@ class _GameState extends State<Game> {
                     20.0 +
                     (height / 10 * level.livello!),
                 child: LevelIndicator(
+                  course: widget.course,
                   level: level,
                   backCallback: () {
                     setState(() {});
@@ -114,11 +119,13 @@ class LevelIndicator extends StatefulWidget {
 
   const LevelIndicator({
     super.key,
+    required this.course,
     required this.level,
     required this.backCallback,
   });
 
   final Level level;
+  final Course course;
 
   @override
   State<LevelIndicator> createState() => _LevelIndicatorState();
@@ -142,6 +149,7 @@ class _LevelIndicatorState extends State<LevelIndicator> {
             .pushNamed(Quiz.routeName, arguments: widget.level)
             .then((_) {
           widget.backCallback();
+          widget.course.save();
         });
       },
       child: Column(

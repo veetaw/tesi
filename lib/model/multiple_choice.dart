@@ -43,4 +43,9 @@ class MultipleChoice extends HiveObject {
     data['true'] = answers?[correctIndex ?? 0];
     return data;
   }
+
+  @override
+  String toString() {
+    return 'MultipleChoice{question: $question, answers: $answers, correctIndex: $correctIndex, answer: $answer, spiegazione: $spiegazione, suggerimento: $suggerimento}';
+  }
 }

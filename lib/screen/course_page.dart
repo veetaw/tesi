@@ -45,30 +45,31 @@ class CoursePage extends StatelessWidget {
                         ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   const Padding(padding: EdgeInsets.all(4)),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: SvgPicture.asset(
-                            AssetNames.kHandsInPocketSad,
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              "Sembra tu non abbia ancora delle medaglie",
-                              style: Theme.of(context).textTheme.bodyMedium,
+                  if (course.getLastCompletedLevel()!.livello! <= 2)
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: SvgPicture.asset(
+                              AssetNames.kHandsInPocketSad,
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                  )
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                "Sembra tu non abbia ancora delle medaglie",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
                 ],
               ),
             ),
