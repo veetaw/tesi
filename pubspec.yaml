@@ -69,6 +69,10 @@ flutter:
     - assets/btn_done_2.svg
     - assets/btn_done.svg
     - assets/studying.svg
+    - assets/medal_1.svg
+    - assets/medal_2.svg
+    - assets/medal_3.svg
+    - assets/medal_4.svg
 
   fonts:
     - family: Nunito

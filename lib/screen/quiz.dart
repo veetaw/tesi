@@ -1,7 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/api/check.dart';
 import 'package:tesi/model/level.dart';
@@ -294,6 +293,7 @@ class _QuizState extends State<Quiz> {
             context: context,
             dialogType: DialogType.success,
             animType: AnimType.bottomSlide,
+            dismissOnTouchOutside: false,
             title: 'Congratulazioni',
             desc: 'Hai completato il quiz!',
             btnOkOnPress: () async {

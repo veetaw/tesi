@@ -144,27 +144,50 @@ class _HomeState extends State<Home> {
                                             const Padding(
                                               padding: EdgeInsets.only(top: 16),
                                             ),
-                                            Text(
-                                              "Livello ${course.getLastCompletedLevel()!.livello! + 1}",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                            ),
-                                            const Padding(
-                                              padding: EdgeInsets.only(top: 4),
-                                            ),
-                                            LinearProgressIndicator(
-                                              backgroundColor:
-                                                  kBrownAccent.withAlpha(50),
-                                              color: kBrownAccent,
-                                              minHeight: 6,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              value: course.getProgress(),
-                                            )
+                                            if (course.getProgress() != 1) ...[
+                                              Text(
+                                                "Livello ${course.getLastCompletedLevel()!.livello! + 1}",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                              ),
+                                              const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 4),
+                                              ),
+                                              LinearProgressIndicator(
+                                                backgroundColor:
+                                                    kBrownAccent.withAlpha(50),
+                                                color: kBrownAccent,
+                                                minHeight: 6,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                value: course.getProgress(),
+                                              ),
+                                            ] else ...[
+                                              Text(
+                                                "Corso completato !",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                              ),
+                                              const SizedBox(
+                                                width: double.infinity,
+                                                height: 10,
+                                              ),
+                                              SvgPicture.asset(
+                                                AssetNames.kDiamond,
+                                                width: 100,
+                                              ),
+                                            ]
                                           ],
                                         ),
                                       ),

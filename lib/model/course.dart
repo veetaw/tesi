@@ -77,6 +77,6 @@ class Course extends HiveObject {
     if (levels == null || levels!.isEmpty) return 0.0;
     Level? lastCompletedLevel = getLastCompletedLevel();
     if (lastCompletedLevel == null) return 0.0;
-    return lastCompletedLevel.livello! / levels!.length;
+    return (lastCompletedLevel.livello! + 1) / levels!.length;
   }
 }
