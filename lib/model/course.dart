@@ -56,7 +56,8 @@ class Course extends HiveObject {
       nome: json['nome'],
       argomenti: json['argomenti'],
       levels: levels,
-      updatedOn: DateTime.parse(json['updatedOn']),
+      updatedOn:
+          json['updatedOn'] != null ? DateTime.parse(json['updatedOn']) : null,
     );
   }
 

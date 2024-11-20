@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tesi/constants/asset_names.dart';
@@ -10,6 +11,7 @@ import 'package:tesi/model/message.dart';
 import 'package:tesi/provider/chat_provider.dart';
 import 'package:tesi/screen/quizhog.dart';
 import 'package:tesi/service/api.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AskQuizHog extends ConsumerStatefulWidget {
   static const String routeName = "ask_quizhog";
@@ -224,12 +226,15 @@ class MessageWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        message.messaggio,
-                        maxLines: null,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                      Markdown(
+                        data: message.messaggio,
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        physics: const NeverScrollableScrollPhysics(),
                       ),
-                      if (!user) ...[
+                      if (!user &&
+                          message.linkApprofondimento != null &&
+                          message.linkApprofondimento!.isNotEmpty) ...[
                         const Padding(
                           padding: EdgeInsets.only(top: 8),
                         ),
@@ -250,24 +255,27 @@ class MessageWidget extends StatelessWidget {
                               scrollDirection: Axis.horizontal,
                               children: [
                                 ...message.linkApprofondimento!.entries.map(
-                                  (e) => Container(
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    padding: const EdgeInsets.all(8),
-                                    margin: const EdgeInsets.only(right: 8),
-                                    child: Center(
-                                      child: Text(
-                                        e.key,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: kBrownAccent,
-                                            ),
+                                  (e) => InkWell(
+                                    onTap: () => launchUrl(Uri.parse(e.value)),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.all(8),
+                                      margin: const EdgeInsets.only(right: 8),
+                                      child: Center(
+                                        child: Text(
+                                          e.key,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                color: kBrownAccent,
+                                              ),
+                                        ),
                                       ),
                                     ),
                                   ),

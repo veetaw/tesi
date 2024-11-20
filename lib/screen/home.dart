@@ -99,7 +99,7 @@ class _HomeState extends State<Home> {
                                     b.getProgress() == 1) {
                                   return -1;
                                 }
-                                return a.updatedOn.compareTo(b.updatedOn);
+                                return b.updatedOn.compareTo(a.updatedOn);
                               });
 
                             return ListView.builder(

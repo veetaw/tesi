@@ -36,6 +36,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_confetti: ^0.3.4
+  flutter_markdown: ^0.7.4+1
   flutter_riverpod: ^2.6.1
   flutter_svg: ^2.0.14
   google_sign_in: ^6.2.2
@@ -45,6 +46,7 @@ dependencies:
   shared_preferences: ^2.3.3
   syncfusion_flutter_pdf: ^27.2.2
   syncfusion_flutter_pdfviewer: ^27.2.2
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   build_runner: ^2.4.13

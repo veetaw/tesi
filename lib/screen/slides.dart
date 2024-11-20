@@ -82,11 +82,14 @@ class _SlidesState extends State<Slides> {
       ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                "Seleziona del testo per ricevere una spiegazione più dettagliata",
+                _filePath == null
+                    ? "Seleziona un file PDF per visualizzarlo"
+                    : "Seleziona del testo per ricevere una spiegazione più dettagliata",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -94,26 +97,37 @@ class _SlidesState extends State<Slides> {
             ),
             Expanded(
               child: _filePath == null
-                  ? Container(
-                      alignment: Alignment.center,
-                      margin: const EdgeInsets.all(16),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kBrownPrimary,
+                  ? Column(
+                      children: [
+                        Expanded(
+                          child: SvgPicture.asset(
+                            AssetNames.kBookInHandWalk,
                           ),
-                          onPressed: _pickPDFFile,
-                          child: Text(
-                            'Seleziona file PDF',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.all(16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kBrownPrimary,
+                              ),
+                              onPressed: _pickPDFFile,
+                              child: Text(
+                                'Seleziona file PDF',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     )
                   : Container(
                       margin: const EdgeInsets.all(16),
