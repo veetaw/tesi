@@ -50,6 +50,15 @@ class _AskQuizHogState extends ConsumerState<AskQuizHog> {
         ref.read(chatProvider).addMessage(v);
         loadingDialog.dismiss();
       });
+    } else if (widget.input.corso != null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        ref.read(chatProvider).addMessage(
+              Message(
+                messaggio: "Ciao, come posso aiutarti?",
+                user: false,
+              ),
+            );
+      });
     }
 
     super.initState();
@@ -89,14 +98,15 @@ class _AskQuizHogState extends ConsumerState<AskQuizHog> {
                   children: ref.watch(chatProvider).messages.map((message) {
                     return MessageWidget(
                       user: message.user,
-                      message: message.messaggio,
+                      message: message,
                     );
                   }).toList()
                     ..addAll([
                       if (ref.watch(chatProvider).isTyping)
-                        const MessageWidget(
+                        MessageWidget(
                           user: false,
-                          message: "QuizHog sta scrivendo...",
+                          message:
+                              Message(messaggio: "QuizHog sta scrivendo..."),
                         ),
                     ]),
                 ),
@@ -117,22 +127,44 @@ class _AskQuizHogState extends ConsumerState<AskQuizHog> {
                     suffixIcon: InkWell(
                       onTap: () {
                         if (controller.text.isNotEmpty) {
-                          setState(() {
-                            ref.read(chatProvider).addMessage(
-                                  Message(
-                                    messaggio: controller.text,
-                                  ),
-                                );
+                          if (widget.input.pdfContent != null) {
+                            setState(() {
+                              ref.read(chatProvider).addMessage(
+                                    Message(
+                                      messaggio: controller.text,
+                                    ),
+                                  );
 
-                            ref.read(chatProvider).isTyping = true;
+                              ref.read(chatProvider).isTyping = true;
 
-                            ApiService.chat(controller.text).then((value) {
-                              ref.read(chatProvider).addMessage(value);
-                              ref.read(chatProvider).isTyping = false;
+                              ApiService.chat(controller.text).then((value) {
+                                ref.read(chatProvider).addMessage(value);
+                                ref.read(chatProvider).isTyping = false;
+                              });
+
+                              controller.clear();
                             });
+                          } else if (widget.input.corso != null) {
+                            setState(() {
+                              ref.read(chatProvider).addMessage(
+                                    Message(
+                                      messaggio: controller.text,
+                                      user: true,
+                                    ),
+                                  );
 
-                            controller.clear();
-                          });
+                              ref.read(chatProvider).isTyping = true;
+
+                              ApiService.chatCourse(
+                                      widget.input.corso!, controller.text)
+                                  .then((value) {
+                                ref.read(chatProvider).addMessage(value);
+                                ref.read(chatProvider).isTyping = false;
+                              });
+
+                              controller.clear();
+                            });
+                          }
                         }
                       },
                       child: const Icon(
@@ -153,7 +185,7 @@ class _AskQuizHogState extends ConsumerState<AskQuizHog> {
 
 class MessageWidget extends StatelessWidget {
   final bool user;
-  final String message;
+  final Message message;
 
   const MessageWidget({
     super.key,
@@ -172,22 +204,82 @@ class MessageWidget extends StatelessWidget {
         children: [
           if (!user) _buildAvatar(user),
           Expanded(
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: user ? kBrownLight.withAlpha(100) : kBrownLight,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(12),
-                  topRight: Radius.circular(!user ? 12 : 0),
-                  bottomRight: const Radius.circular(12),
-                  bottomLeft: Radius.circular(user ? 12 : 0),
+            child: Column(
+              crossAxisAlignment:
+                  user ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: user ? kBrownLight.withAlpha(100) : kBrownLight,
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(12),
+                      topRight: Radius.circular(!user ? 12 : 0),
+                      bottomRight: const Radius.circular(12),
+                      bottomLeft: Radius.circular(user ? 12 : 0),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        message.messaggio,
+                        maxLines: null,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      if (!user) ...[
+                        const Padding(
+                          padding: EdgeInsets.only(top: 8),
+                        ),
+                        Text(
+                          "Approfondimenti:",
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                        if (message.linkApprofondimento != null &&
+                            message.linkApprofondimento!.isNotEmpty)
+                          Container(
+                            margin: const EdgeInsets.only(top: 16),
+                            height: 40,
+                            child: ListView(
+                              primary: false,
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                ...message.linkApprofondimento!.entries.map(
+                                  (e) => Container(
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.all(8),
+                                    margin: const EdgeInsets.only(right: 8),
+                                    child: Center(
+                                      child: Text(
+                                        e.key,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: kBrownAccent,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ],
+                  ),
                 ),
-              ),
-              child: Text(
-                message,
-                maxLines: null,
-              ),
+              ],
             ),
           ),
           if (user) _buildAvatar(user)

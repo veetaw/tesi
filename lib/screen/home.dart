@@ -133,7 +133,7 @@ class _HomeState extends State<Home> {
                                       background: Container(),
                                       onDismissed: (direction) =>
                                           box.deleteAt(index),
-                                      key: Key(course!.nome),
+                                      key: Key(course.nome),
                                       child: Container(
                                         padding: const EdgeInsets.all(16),
                                         decoration: BoxDecoration(

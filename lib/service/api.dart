@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:tesi/model/api/check.dart';
 import 'package:http_parser/http_parser.dart';
@@ -113,6 +112,28 @@ class ApiService {
     );
 
     return;
+  }
+
+  static Future<Message> chatCourse(Course course, String domanda) async {
+    String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
+
+    var response = await http.post(
+      Uri.parse("$baseUrl/ai/chatCourse"),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        "course_id": course.id.toString(),
+        "domanda": domanda,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      return Message.fromJson(body);
+    } else {
+      throw "Errore nella chat.";
+    }
   }
 
   static Future<Message> chat(String domanda) async {
