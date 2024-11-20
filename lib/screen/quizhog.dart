@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tesi/constants/asset_names.dart';
 import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/course.dart';
 import 'package:tesi/screen/ask_quizhog.dart';
+import 'package:tesi/service/api.dart';
+
+// state management tipo con ref.watch
 
 class QuizHog extends StatelessWidget {
   static const String routeName = "quizhog";
@@ -37,16 +42,23 @@ class QuizHog extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Testo selezionato",
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
+                    if (input.textSelection != null &&
+                        input.textSelection!.isNotEmpty) ...[
+                      Text(
+                        "Testo selezionato",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Text(
+                            "\"${(input.textSelection ?? "").replaceAll("\n", " ")}\"",
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                    ),
-                    Text(
-                      "\"${(input.textSelection ?? "").replaceAll("\n", " ")}\"",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
+                        ),
+                      ),
+                    ],
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: ElevatedButton(
@@ -60,10 +72,12 @@ class QuizHog extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            AskQuizHog.routeName,
-                            arguments: input,
-                          );
+                          Navigator.of(context)
+                              .pushNamed(
+                                AskQuizHog.routeName,
+                                arguments: input,
+                              )
+                              .then((_) => ApiService.closeChat());
                         },
                         child: Text(
                           'Chiedi a QuizHog',
@@ -108,7 +122,7 @@ class QuizHog extends StatelessWidget {
 
 class ScreenInput {
   final String? textSelection;
-  final String? pdfContent;
+  final File? pdfContent;
   final Course? corso;
 
   ScreenInput({

@@ -6,6 +6,7 @@ import 'package:tesi/model/course.dart';
 import 'package:tesi/screen/ask_quizhog.dart';
 import 'package:tesi/screen/game.dart';
 import 'package:tesi/screen/quizhog.dart';
+import 'package:tesi/service/api.dart';
 
 class CoursePage extends StatelessWidget {
   static const String routeName = "course";
@@ -99,10 +100,12 @@ class CoursePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(
-                          AskQuizHog.routeName,
-                          arguments: ScreenInput(corso: course),
-                        );
+                        Navigator.of(context)
+                            .pushNamed(
+                              AskQuizHog.routeName,
+                              arguments: ScreenInput(corso: course),
+                            )
+                            .then((_) => ApiService.closeChat());
                       },
                       child: Text(
                         'Chiedi a QuizHog',

@@ -1,11 +1,17 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tesi/constants/asset_names.dart';
 import 'package:tesi/constants/colors.dart';
+import 'package:tesi/model/message.dart';
+import 'package:tesi/provider/chat_provider.dart';
 import 'package:tesi/screen/quizhog.dart';
+import 'package:tesi/service/api.dart';
 
-class AskQuizHog extends StatefulWidget {
+class AskQuizHog extends ConsumerStatefulWidget {
   static const String routeName = "ask_quizhog";
 
   final ScreenInput input;
@@ -13,18 +19,61 @@ class AskQuizHog extends StatefulWidget {
   AskQuizHog({super.key, required this.input});
 
   @override
-  State<AskQuizHog> createState() => _AskQuizHogState();
+  ConsumerState<AskQuizHog> createState() => _AskQuizHogState();
 }
 
-class _AskQuizHogState extends State<AskQuizHog> {
+class _AskQuizHogState extends ConsumerState<AskQuizHog> {
   final TextEditingController controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
-  List<Message> history = [
-    Message(user: false, message: "Ciaoaoosoaodoaosdoaod"),
-  ];
+  @override
+  void initState() {
+    if (widget.input.textSelection != null) {
+      AwesomeDialog loadingDialog = AwesomeDialog(
+        context: context,
+        dialogType: DialogType.noHeader,
+        animType: AnimType.bottomSlide,
+        body: Container(
+          padding: const EdgeInsets.all(16),
+          child: CircularProgressIndicator(),
+        ),
+        dismissOnTouchOutside: false,
+        dismissOnBackKeyPress: false,
+      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        loadingDialog.show();
+      });
+
+      ApiService.getExplain(
+              widget.input.pdfContent!, widget.input.textSelection ?? "")
+          .then((v) {
+        ref.read(chatProvider).addMessage(v);
+        loadingDialog.dismiss();
+      });
+    }
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    ApiService.closeChat();
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text("QuizHog"),
@@ -36,7 +85,20 @@ class _AskQuizHogState extends State<AskQuizHog> {
             children: [
               Expanded(
                 child: ListView(
-                  children: history,
+                  controller: _scrollController,
+                  children: ref.watch(chatProvider).messages.map((message) {
+                    return MessageWidget(
+                      user: message.user,
+                      message: message.messaggio,
+                    );
+                  }).toList()
+                    ..addAll([
+                      if (ref.watch(chatProvider).isTyping)
+                        const MessageWidget(
+                          user: false,
+                          message: "QuizHog sta scrivendo...",
+                        ),
+                    ]),
                 ),
               ),
               Padding(
@@ -56,8 +118,19 @@ class _AskQuizHogState extends State<AskQuizHog> {
                       onTap: () {
                         if (controller.text.isNotEmpty) {
                           setState(() {
-                            history.add(
-                                Message(user: true, message: controller.text));
+                            ref.read(chatProvider).addMessage(
+                                  Message(
+                                    messaggio: controller.text,
+                                  ),
+                                );
+
+                            ref.read(chatProvider).isTyping = true;
+
+                            ApiService.chat(controller.text).then((value) {
+                              ref.read(chatProvider).addMessage(value);
+                              ref.read(chatProvider).isTyping = false;
+                            });
+
                             controller.clear();
                           });
                         }
@@ -78,11 +151,11 @@ class _AskQuizHogState extends State<AskQuizHog> {
   }
 }
 
-class Message extends StatelessWidget {
+class MessageWidget extends StatelessWidget {
   final bool user;
   final String message;
 
-  const Message({
+  const MessageWidget({
     super.key,
     required this.user,
     required this.message,

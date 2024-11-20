@@ -89,12 +89,25 @@ class _HomeState extends State<Home> {
                               ],
                             );
                           } else {
+                            var sortedCourses = box.values.toList()
+                              ..sort((a, b) {
+                                if (a.getProgress() == 1 &&
+                                    b.getProgress() != 1) {
+                                  return 1;
+                                }
+                                if (a.getProgress() != 1 &&
+                                    b.getProgress() == 1) {
+                                  return -1;
+                                }
+                                return a.updatedOn.compareTo(b.updatedOn);
+                              });
+
                             return ListView.builder(
                               padding: const EdgeInsets.only(top: 16),
                               physics: const BouncingScrollPhysics(),
-                              itemCount: box.values.length,
+                              itemCount: sortedCourses.length,
                               itemBuilder: (context, index) {
-                                Course? course = box.getAt(index);
+                                Course? course = sortedCourses[index];
 
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 16),

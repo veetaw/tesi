@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:tesi/constants/asset_names.dart';
 import 'package:tesi/constants/colors.dart';
@@ -17,12 +22,58 @@ class Slides extends StatefulWidget {
 class _SlidesState extends State<Slides> {
   late PdfViewerController _pdfViewerController;
   OverlayEntry? _overlayEntry;
+
+  File? _filePath;
+
   final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
 
   @override
   void initState() {
     _pdfViewerController = PdfViewerController();
     super.initState();
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Errore'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _pickPDFFile() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
+
+      if (result != null) {
+        final file = File(result.files.single.path!);
+        final fileSize = file.lengthSync();
+        if (fileSize <= 3 * 1024 * 1024) {
+          setState(() {
+            _filePath = file;
+          });
+        } else {
+          _showErrorDialog("Il file selezionato supera i 3MB!");
+        }
+      }
+    } catch (e) {
+      _showErrorDialog("Errore nella selezione del file: $e");
+    }
   }
 
   @override
@@ -44,33 +95,55 @@ class _SlidesState extends State<Slides> {
               ),
             ),
             Expanded(
-              child: Container(
-                margin: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: kBrownAccent, width: 2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: SfPdfViewer.network(
-                    'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf',
-                    onTextSelectionChanged:
-                        (PdfTextSelectionChangedDetails details) {
-                      if (details.selectedText == null &&
-                          _overlayEntry != null) {
-                        _overlayEntry!.remove();
-                        _overlayEntry = null;
-                      } else if (details.selectedText != null &&
-                          _overlayEntry == null) {
-                        _showContextMenu(context, details);
-                      }
-                    },
-                    key: _pdfViewerKey,
-                    controller: _pdfViewerController,
-                    canShowTextSelectionMenu: false,
-                  ),
-                ),
-              ),
+              child: _filePath == null
+                  ? Container(
+                      alignment: Alignment.center,
+                      margin: const EdgeInsets.all(16),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kBrownPrimary,
+                          ),
+                          onPressed: _pickPDFFile,
+                          child: Text(
+                            'Seleziona file PDF',
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      margin: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: kBrownAccent, width: 2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: SfPdfViewer.file(
+                          _filePath!,
+                          onTextSelectionChanged:
+                              (PdfTextSelectionChangedDetails details) {
+                            if (details.selectedText == null &&
+                                _overlayEntry != null) {
+                              _overlayEntry!.remove();
+                              _overlayEntry = null;
+                            } else if (details.selectedText != null &&
+                                _overlayEntry == null) {
+                              _showContextMenu(context, details);
+                            }
+                          },
+                          key: _pdfViewerKey,
+                          controller: _pdfViewerController,
+                          canShowTextSelectionMenu: false,
+                        ),
+                      ),
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
@@ -81,7 +154,12 @@ class _SlidesState extends State<Slides> {
                     backgroundColor: kBrownLight,
                   ),
                   onPressed: () {
-                    // TODO: quando è premuto il bottone avanti mando tutto il pdf all'api
+                    Navigator.of(context).pushNamed(
+                      QuizHog.routeName,
+                      arguments: ScreenInput(
+                        pdfContent: _filePath,
+                      ),
+                    );
                   },
                   child: Text(
                     'Avanti',
@@ -140,14 +218,14 @@ class _SlidesState extends State<Slides> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   if (details.selectedText != null) {
-                    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
                       Navigator.of(context).pushNamed(
                         QuizHog.routeName,
                         arguments: ScreenInput(
                           textSelection: details.selectedText,
-                          pdfContent: "",
+                          pdfContent: _filePath,
                         ),
                       );
 

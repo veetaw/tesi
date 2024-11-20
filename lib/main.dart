@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -52,62 +53,65 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-        fontFamily: 'Nunito',
-        textSelectionTheme: TextSelectionThemeData(
-          selectionColor: kBrownLight.withAlpha(100),
-          cursorColor: kBrownAccent,
-          selectionHandleColor: kBrownPrimary,
+    return ProviderScope(
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+          fontFamily: 'Nunito',
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: kBrownLight.withAlpha(100),
+            cursorColor: kBrownAccent,
+            selectionHandleColor: kBrownPrimary,
+          ),
+          scaffoldBackgroundColor: Colors.white,
+          dialogBackgroundColor: Colors.white,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+          ),
         ),
-        scaffoldBackgroundColor: Colors.white,
-        dialogBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-        ),
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case Home.routeName:
+              return MaterialPageRoute(builder: (context) => const Home());
+            case AddCourse.routeName:
+              return MaterialPageRoute(builder: (context) => const AddCourse());
+            case Slides.routeName:
+              return MaterialPageRoute(builder: (context) => const Slides());
+            case CoursePage.routeName:
+              return MaterialPageRoute(
+                builder: (context) =>
+                    CoursePage(course: settings.arguments as Course),
+              );
+            case Game.routeName:
+              return MaterialPageRoute(
+                builder: (context) =>
+                    Game(course: settings.arguments as Course),
+              );
+            case Quiz.routeName:
+              return MaterialPageRoute(
+                builder: (context) => Quiz(level: settings.arguments as Level),
+              );
+            case AskQuizHog.routeName:
+              return MaterialPageRoute(
+                builder: (context) => AskQuizHog(
+                  input: settings.arguments as ScreenInput,
+                ),
+              );
+            case QuizHog.routeName:
+              return MaterialPageRoute(
+                builder: (context) =>
+                    QuizHog(input: settings.arguments as ScreenInput),
+              );
+            default:
+              return MaterialPageRoute(
+                builder: (context) => const LandingPage(),
+              );
+          }
+        },
+        home: const LandingPage(),
       ),
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case Home.routeName:
-            return MaterialPageRoute(builder: (context) => const Home());
-          case AddCourse.routeName:
-            return MaterialPageRoute(builder: (context) => const AddCourse());
-          case Slides.routeName:
-            return MaterialPageRoute(builder: (context) => const Slides());
-          case CoursePage.routeName:
-            return MaterialPageRoute(
-              builder: (context) =>
-                  CoursePage(course: settings.arguments as Course),
-            );
-          case Game.routeName:
-            return MaterialPageRoute(
-              builder: (context) => Game(course: settings.arguments as Course),
-            );
-          case Quiz.routeName:
-            return MaterialPageRoute(
-              builder: (context) => Quiz(level: settings.arguments as Level),
-            );
-          case AskQuizHog.routeName:
-            return MaterialPageRoute(
-              builder: (context) => AskQuizHog(
-                input: settings.arguments as ScreenInput,
-              ),
-            );
-          case QuizHog.routeName:
-            return MaterialPageRoute(
-              builder: (context) =>
-                  QuizHog(input: settings.arguments as ScreenInput),
-            );
-          default:
-            return MaterialPageRoute(
-              builder: (context) => const LandingPage(),
-            );
-        }
-      },
-      home: const LandingPage(),
     );
   }
 

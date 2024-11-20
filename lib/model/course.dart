@@ -17,16 +17,20 @@ class Course extends HiveObject {
   @HiveField(3)
   List<Level>? levels;
 
+  @HiveField(4)
+  DateTime updatedOn;
+
   Course({
     required this.id,
     required this.nome,
     required this.argomenti,
     this.levels,
-  });
+    DateTime? updatedOn,
+  }) : updatedOn = updatedOn ?? DateTime.now();
 
   @override
   String toString() {
-    return 'Course{id: $id, nome: $nome}';
+    return 'Course{id: $id, nome: $nome, updatedOn: $updatedOn}';
   }
 
   Map<String, dynamic> toJson() {
@@ -34,6 +38,7 @@ class Course extends HiveObject {
       'id': id,
       'nome': nome,
       'argomenti': argomenti,
+      'updatedOn': updatedOn.toIso8601String(),
     };
   }
 
@@ -51,6 +56,7 @@ class Course extends HiveObject {
       nome: json['nome'],
       argomenti: json['argomenti'],
       levels: levels,
+      updatedOn: DateTime.parse(json['updatedOn']),
     );
   }
 
@@ -67,16 +73,24 @@ class Course extends HiveObject {
     return other is Course &&
         other.id == id &&
         other.nome == nome &&
-        other.argomenti == argomenti;
+        other.argomenti == argomenti &&
+        other.updatedOn == updatedOn;
   }
 
   @override
-  int get hashCode => id.hashCode ^ nome.hashCode ^ argomenti.hashCode;
+  int get hashCode =>
+      id.hashCode ^ nome.hashCode ^ argomenti.hashCode ^ updatedOn.hashCode;
 
   double getProgress() {
     if (levels == null || levels!.isEmpty) return 0.0;
     Level? lastCompletedLevel = getLastCompletedLevel();
     if (lastCompletedLevel == null) return 0.0;
     return (lastCompletedLevel.livello! + 1) / levels!.length;
+  }
+
+  @override
+  Future<void> save() async {
+    updatedOn = DateTime.now();
+    await super.save();
   }
 }

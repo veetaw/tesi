@@ -21,13 +21,14 @@ class CourseAdapter extends TypeAdapter<Course> {
       nome: fields[1] as String,
       argomenti: fields[2] as String,
       levels: (fields[3] as List?)?.cast<Level>(),
+      updatedOn: fields[4] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Course obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class CourseAdapter extends TypeAdapter<Course> {
       ..writeByte(2)
       ..write(obj.argomenti)
       ..writeByte(3)
-      ..write(obj.levels);
+      ..write(obj.levels)
+      ..writeByte(4)
+      ..write(obj.updatedOn);
   }
 
   @override
