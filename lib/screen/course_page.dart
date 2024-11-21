@@ -5,6 +5,7 @@ import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/course.dart';
 import 'package:tesi/screen/ask_quizhog.dart';
 import 'package:tesi/screen/game.dart';
+import 'package:tesi/screen/leaderboard_page.dart';
 import 'package:tesi/screen/quizhog.dart';
 import 'package:tesi/service/api.dart';
 
@@ -23,6 +24,18 @@ class CoursePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(course.nome),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamed(LeaderboardPage.routeName, arguments: course);
+            },
+            icon: const Icon(
+              Icons.leaderboard,
+              color: kBrownAccent,
+            ),
+          )
+        ],
       ),
       resizeToAvoidBottomInset: false,
       body: Column(

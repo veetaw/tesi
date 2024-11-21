@@ -10,6 +10,9 @@ class OpenQuestion extends HiveObject {
   @HiveField(1)
   String? suggerimento;
 
+  @HiveField(2)
+  int? voto;
+
   OpenQuestion({this.domanda, this.suggerimento});
 
   OpenQuestion.fromJson(Map<String, dynamic> json) {
@@ -21,6 +24,7 @@ class OpenQuestion extends HiveObject {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['domanda'] = domanda;
     data['suggerimento'] = suggerimento;
+    data['voto'] = voto;
     return data;
   }
 }

@@ -1,14 +1,15 @@
 import 'dart:io';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tesi/constants/asset_names.dart';
 import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/course.dart';
+import 'package:tesi/model/level.dart';
 import 'package:tesi/screen/ask_quizhog.dart';
+import 'package:tesi/screen/quiz.dart';
 import 'package:tesi/service/api.dart';
-
-// state management tipo con ref.watch
 
 class QuizHog extends StatelessWidget {
   static const String routeName = "quizhog";
@@ -88,27 +89,59 @@ class QuizHog extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48),
-                          backgroundColor: kBrownLight,
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    if (input.textSelection == null)
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 48),
+                            backgroundColor: kBrownLight,
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () async {
+                            if (input.pdfContent == null ||
+                                !input.pdfContent!.existsSync()) return;
+                            AwesomeDialog loadingDialog = AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.noHeader,
+                              animType: AnimType.bottomSlide,
+                              body: Container(
+                                padding: const EdgeInsets.all(16),
+                                child: const CircularProgressIndicator(),
+                              ),
+                              dismissOnTouchOutside: false,
+                              dismissOnBackKeyPress: false,
+                            );
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              loadingDialog.show();
+                            });
+
+                            var resp =
+                                await ApiService.genQuiz(input.pdfContent!);
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              loadingDialog.dismiss();
+                              Navigator.of(context).pushNamed(
+                                Quiz.routeName,
+                                arguments: Level(
+                                  multipleChoice: resp,
+                                ),
+                              );
+                            });
+                          },
+                          child: Text(
+                            'Quiz!',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                ),
                           ),
                         ),
-                        onPressed: () {},
-                        child: Text(
-                          'Quiz!',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                        ),
                       ),
-                    ),
                   ],
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/api/check.dart';
 import 'package:tesi/model/level.dart';
@@ -27,8 +28,8 @@ class _QuizState extends State<Quiz> {
   @override
   void initState() {
     questions = [
-      ...widget.level.multipleChoice!,
-      ...widget.level.openQuestions!,
+      ...widget.level.multipleChoice ?? [],
+      ...widget.level.openQuestions ?? [],
     ]..shuffle();
 
     super.initState();
@@ -38,7 +39,9 @@ class _QuizState extends State<Quiz> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Livello ${widget.level.livello! + 1}"),
+        title: Text(widget.level.livello != null
+            ? "Livello ${widget.level.livello! + 1}"
+            : "Quiz"),
         actions: [
           IconButton(
             icon: const Icon(Icons.question_mark_rounded),
@@ -63,7 +66,7 @@ class _QuizState extends State<Quiz> {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: PageView.builder(
-                  physics: const BackwardOnlyScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   controller: pageController,
                   onPageChanged: (index) => setState(() => currentPage = index),
                   itemCount: questions.length,
@@ -149,8 +152,17 @@ class _QuizState extends State<Quiz> {
                                     dialogType: DialogType.error,
                                     animType: AnimType.bottomSlide,
                                     title: 'Risposta sbagliata',
-                                    desc:
-                                        'La risposta corretta era: ${question.answers![question.correctIndex!]}\nSpiegazione: ${question.spiegazione}}',
+                                    body: Container(
+                                      margin: const EdgeInsets.all(16),
+                                      child: Markdown(
+                                        shrinkWrap: true,
+                                        padding: EdgeInsets.zero,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        data:
+                                            """**La risposta corretta era**: ${question.answers![question.correctIndex!]}\n**Spiegazione:** ${question.spiegazione}""",
+                                      ),
+                                    ),
                                   ).show();
                                 }
                               },
@@ -190,11 +202,13 @@ class _QuizState extends State<Quiz> {
                                   labelStyle:
                                       const TextStyle(color: Colors.black),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: kBrownAccent),
+                                    borderSide:
+                                        const BorderSide(color: kBrownAccent),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: kBrownAccent),
+                                    borderSide:
+                                        const BorderSide(color: kBrownAccent),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
@@ -212,7 +226,8 @@ class _QuizState extends State<Quiz> {
                                       animType: AnimType.bottomSlide,
                                       body: Container(
                                         padding: const EdgeInsets.all(16),
-                                        child: CircularProgressIndicator(),
+                                        child:
+                                            const CircularProgressIndicator(),
                                       ),
                                       dismissOnTouchOutside: false,
                                       dismissOnBackKeyPress: false,
@@ -226,6 +241,8 @@ class _QuizState extends State<Quiz> {
                                     );
 
                                     loadingDialog.dismiss();
+
+                                    questions[index].voto = resp.voto;
 
                                     await AwesomeDialog(
                                       context: context,
@@ -289,16 +306,43 @@ class _QuizState extends State<Quiz> {
         await onTap();
 
         if (currentPage + 1 == questions.length) {
+          // RISPOSTA MULTIPLA
+          int correct = questions
+              .where((q) => q is MultipleChoice && q.answer == q.correctIndex)
+              .length;
+
+          // RISPOSTA APERTA
+          int _total = questions
+              .whereType<OpenQuestion>()
+              .fold(0, (prev, p) => p.voto! + prev);
+
+          double mean = _total / questions.whereType<OpenQuestion>().length;
+
+          // TOTALE
+          int points = questions.fold(0, (prev, q) {
+            if (q is MultipleChoice) {
+              if (q.answer == q.correctIndex) {
+                return prev + 3;
+              }
+            } else {
+              if (q is OpenQuestion) {
+                return prev + q.voto!;
+              }
+            }
+            return prev;
+          });
+
           AwesomeDialog(
             context: context,
             dialogType: DialogType.success,
             animType: AnimType.bottomSlide,
             dismissOnTouchOutside: false,
             title: 'Congratulazioni',
-            desc: 'Hai completato il quiz!',
+            desc:
+                'Hai completato il quiz!\nHai risposto a $correct domande giuste ${widget.level.openQuestions != null ? 'e hai ottenuto una media del ${mean.toStringAsFixed(2)}/30 ${mean >= 25 ? ', FANTASTICO!' : '.'}\nPUNTEGGIO TOTALIZZATO: $points' : '.'}',
             btnOkOnPress: () async {
               widget.level.isDone = true;
-              Navigator.of(context).pop();
+              Navigator.of(context).pop<int>(points);
             },
           ).show();
         } else {
@@ -318,24 +362,5 @@ class _QuizState extends State<Quiz> {
             ),
       ),
     );
-  }
-}
-
-class BackwardOnlyScrollPhysics extends ScrollPhysics {
-  const BackwardOnlyScrollPhysics({ScrollPhysics? parent})
-      : super(parent: parent);
-
-  @override
-  BackwardOnlyScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return BackwardOnlyScrollPhysics(parent: buildParent(ancestor));
-  }
-
-  @override
-  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
-    if (offset > 0) {
-      // Blocca il movimento in avanti
-      return 0;
-    }
-    return super.applyPhysicsToUserOffset(position, offset);
   }
 }

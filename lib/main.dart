@@ -10,6 +10,7 @@ import 'package:tesi/screen/ask_quizhog.dart';
 import 'package:tesi/screen/course_page.dart';
 import 'package:tesi/screen/game.dart';
 import 'package:tesi/screen/home.dart';
+import 'package:tesi/screen/leaderboard_page.dart';
 import 'package:tesi/screen/quiz.dart';
 import 'package:tesi/screen/quizhog.dart';
 import 'package:tesi/screen/slides.dart';
@@ -103,6 +104,11 @@ class _MyAppState extends State<MyApp> {
               return MaterialPageRoute(
                 builder: (context) =>
                     QuizHog(input: settings.arguments as ScreenInput),
+              );
+            case LeaderboardPage.routeName:
+              return MaterialPageRoute(
+                builder: (context) =>
+                    LeaderboardPage(course: settings.arguments as Course),
               );
             default:
               return MaterialPageRoute(

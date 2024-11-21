@@ -140,6 +140,9 @@ class _HomeState extends State<Home> {
                                           color: kBrownLight.withAlpha(120),
                                           borderRadius:
                                               BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: kBrownAccent,
+                                          ),
                                         ),
                                         child: Column(
                                           crossAxisAlignment:
@@ -281,6 +284,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           },
           icon: const Icon(
             Icons.document_scanner,
+            color: kBrownAccent,
           ),
         )
       ],

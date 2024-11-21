@@ -19,17 +19,19 @@ class OpenQuestionAdapter extends TypeAdapter<OpenQuestion> {
     return OpenQuestion(
       domanda: fields[0] as String?,
       suggerimento: fields[1] as String?,
-    );
+    )..voto = fields[2] as int?;
   }
 
   @override
   void write(BinaryWriter writer, OpenQuestion obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.domanda)
       ..writeByte(1)
-      ..write(obj.suggerimento);
+      ..write(obj.suggerimento)
+      ..writeByte(2)
+      ..write(obj.voto);
   }
 
   @override

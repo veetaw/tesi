@@ -7,6 +7,7 @@ import 'package:tesi/constants/colors.dart';
 import 'package:tesi/model/course.dart';
 import 'package:tesi/model/level.dart';
 import 'package:tesi/screen/quiz.dart';
+import 'package:tesi/service/api.dart';
 
 class Game extends StatefulWidget {
   static const String routeName = "game";
@@ -147,9 +148,11 @@ class _LevelIndicatorState extends State<LevelIndicator> {
 
         Navigator.of(context)
             .pushNamed(Quiz.routeName, arguments: widget.level)
-            .then((_) {
+            .then((points) {
           widget.backCallback();
           widget.course.save();
+
+          ApiService.uploadPoints(points as int, widget.course);
         });
       },
       child: Column(

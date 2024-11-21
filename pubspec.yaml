@@ -41,6 +41,7 @@ dependencies:
   flutter_svg: ^2.0.14
   google_sign_in: ^6.2.2
   hive_flutter: ^1.1.0
+  horizontal_blocked_scroll_physics: ^4.0.1
   http: ^1.2.2
   path_provider: ^2.1.5
   shared_preferences: ^2.3.3
